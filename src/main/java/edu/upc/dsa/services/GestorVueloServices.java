@@ -29,7 +29,7 @@ public class GestorVueloServices {
     private Dron dron;
 
     public GestorVueloServices() {
-        this.gv =GestorVuelosImpl.getInstance(); //CUANDO USAMOS SINGLETONE NUNCAA!!!! PUEDE SER NULL POR DEFINICION
+        this.gv =GestorVuelosImpl.getInstance();
         if((gv.getPilotoListSize() == 0) && (gv.getDronListSize() == 0)){
             gv.addPiloto("0001","Didac", "Arévalo");
             this.dron = gv.addDron("01","Dron01", "Toyota", "axs");
