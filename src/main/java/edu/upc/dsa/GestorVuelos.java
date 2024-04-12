@@ -17,4 +17,8 @@ public interface GestorVuelos {
 
     public Dron addDron(String idDron, String nameDron, String fabricante, String model);
     public Piloto addPiloto(String idPiloto, String namePiloto, String lastnamePiloto);
+
+    public int getDronListSize();
+    public int getPilotoListSize();
+    public int getAlmacenSize();
 }

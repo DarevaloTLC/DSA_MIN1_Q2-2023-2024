@@ -183,6 +183,16 @@ public class GestorVuelosImpl implements GestorVuelos {
 
         }
     }
+    public int getDronListSize(){
+        return dronList.size();
+
+    }
+    public int getPilotoListSize(){
+        return pilotoList.size();
+    }
+    public int getAlmacenSize(){
+        return almacen.size();
+    }
 
 
 
