@@ -2,9 +2,8 @@ package edu.upc.dsa.services;
 
 import edu.upc.dsa.GestorVuelosImpl;
 import edu.upc.dsa.GestorVuelos;
-import edu.upc.dsa.models.Vuelo;
-import edu.upc.dsa.models.Piloto;
-import edu.upc.dsa.models.Dron;
+import edu.upc.dsa.models.*;
+
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,51 +40,62 @@ public class GestorVueloServices {
     }
 
     @GET
-    @ApiOperation(value = "get vuelos By Piloto", notes = "ayiyi")
+    @ApiOperation(value = "get Drones by Horas", notes = "ayiyi")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successfull", response = Vuelo.class, responseContainer = "List"),
+            @ApiResponse(code = 201, message = "Successfull", response = restDron.class, responseContainer = "List"),
             @ApiResponse(code = 404, message = "Track not found")
     })
-    @Path("/ByPiloto/{id}")
+    @Path("/DronesByHoras")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getVuelosByPiloto(@PathParam("id") String idPiloto) {
-        List<Vuelo> vueloList = this.gv.vuelosByPiloto(idPiloto);
-        if(vueloList.isEmpty()){
+    public Response getVuelosByPiloto() {
+        List<Dron> dronList = this.gv.dronesByHoras();
+        List<restDron> restDronList = new ArrayList<>();
+        if(dronList.isEmpty()){
             return Response.status(404).build();
         }
-        GenericEntity<List<Vuelo>> entity = new GenericEntity<List<Vuelo>>(vueloList) {};
+        for(Dron d : dronList){
+            restDron rd = new restDron(d.getIdDron(), d.getNameDron(), d.getFabricante(), d.getModelDron(), d.getHorasVuelo(), d.getOperativo());
+            restDronList.add(rd);
+        }
+        GenericEntity<List<restDron>> entity = new GenericEntity<List<restDron>>(restDronList) {};
         return Response.status(201).entity(entity).build();
 
     }
 
     @GET
-    @ApiOperation(value = "get vuelos By Dron", notes = "ayiyi")
+    @ApiOperation(value = "get Pilotos By Horas", notes = "ayiyi")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successfull", response = Vuelo.class, responseContainer = "List"),
+            @ApiResponse(code = 201, message = "Successfull", response = restPiloto.class, responseContainer = "List"),
             @ApiResponse(code = 404, message = "Track not found")
     })
-    @Path("/ByDron/{id}")
+    @Path("/PilotosByHoras")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getVuelosByDron(@PathParam("id") String idDron) {
-        List<Vuelo> vueloList = this.gv.vuelosByDron(idDron);
-        if(vueloList.isEmpty()){
+    public Response getPilotosByHoras() {
+        List<Piloto> pilotoList = this.gv.pilotosByHoras();
+        List<restPiloto> restPilotoList = new ArrayList<>();
+        if(pilotoList.isEmpty()){
             return Response.status(404).build();
         }
-        GenericEntity<List<Vuelo>> entity = new GenericEntity<List<Vuelo>>(vueloList) {};
+        for(Piloto p : pilotoList){
+            restPiloto rp = new restPiloto(p.getIdPiloto(), p.getFirstName(), p.getLastName(), p.getHorasVuelo());
+            restPilotoList.add(rp);
+        }
+        GenericEntity<List<restPiloto>> entity = new GenericEntity<List<restPiloto>>(restPilotoList) {};
         return Response.status(201).entity(entity).build();
 
     }
     @POST
     @ApiOperation(value = "add new Dron", notes = "asdasd")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successfull", response = Dron.class),
+            @ApiResponse(code = 201, message = "Successfull", response = restDron.class),
     })
     @Path("/NewDron")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response addDron(Dron dron){
-        if(dron==null) return Response.status(500).entity(dron).build();
-        this.gv.addDron(dron.getIdDron(),dron.getNameDron(), dron.getFabricante(), dron.getModelDron());
-        return Response.status(201).entity(dron).build();
+    public Response addDron(restDron rd){
+        if(rd==null) return Response.status(500).entity(rd).build();
+
+        this.gv.addDron(rd.getIdDron(),rd.getNameDron(), rd.getFabricante(), rd.getModelDron());
+        return Response.status(201).entity(rd).build();
     }
     @PUT
     @ApiOperation(value = "reparar dron almacen", notes = "asdasd")
@@ -96,8 +106,9 @@ public class GestorVueloServices {
     @Path("/RepararDron")
     public Response repararDron(){
         Dron dron = gv.repararDronAlmacen();
-        if(dron==null) return Response.status(500).entity(dron).build();
-        return Response.status(201).entity(dron).build();
+        restDron rd = new restDron(dron.getIdDron(), dron.getNameDron(), dron.getFabricante(), dron.getModelDron(), dron.getHorasVuelo(), dron.getOperativo());
+        if(rd==null) return Response.status(500).entity(rd).build();
+        return Response.status(201).entity(rd).build();
     }
 
 
